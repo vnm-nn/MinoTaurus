@@ -1,0 +1,213 @@
+Attribute VB_Name = "Module1"
+Sub Reset()
+
+    Dim iRow As Long
+    
+    iRow = [Counta(DataBase!A:A)] 'Идентификатор последнего значения
+    
+    With UserForm
+    
+        .TextBox1.Value = ".шт"
+        .TextBox2.Value = ".шт"
+        .TextBox3.Value = ".шт"
+        .TextBox4.Value = ".шт"
+            
+        .ComboBox1.Clear
+        
+        .ComboBox1.AddItem "1й"
+        .ComboBox1.AddItem "2й"
+        .ComboBox1.AddItem "3й"
+        
+        .ComboBox2.Clear
+        
+        .ComboBox2.AddItem "1q"
+        .ComboBox2.AddItem "2q"
+        .ComboBox2.AddItem "3q"
+        
+        .ComboBox3.Clear
+        
+        .ComboBox3.AddItem "1999"
+        .ComboBox3.AddItem "2000"
+        .ComboBox3.AddItem "2001"
+        .ComboBox3.AddItem "2002"
+        .ComboBox3.AddItem "2003"
+        .ComboBox3.AddItem "2004"
+        .ComboBox3.AddItem "2005"
+        .ComboBox3.AddItem "2006"
+        .ComboBox3.AddItem "2007"
+        .ComboBox3.AddItem "2008"
+        .ComboBox3.AddItem "2009"
+        .ComboBox3.AddItem "2010"
+        .ComboBox3.AddItem "2011"
+        .ComboBox3.AddItem "2012"
+        .ComboBox3.AddItem "2013"
+        .ComboBox3.AddItem "2014"
+        .ComboBox3.AddItem "2015"
+        .ComboBox3.AddItem "2016"
+        .ComboBox3.AddItem "2017"
+        .ComboBox3.AddItem "2018"
+        .ComboBox3.AddItem "2019"
+        .ComboBox3.AddItem "2020"
+        .ComboBox3.AddItem "2021"
+        
+        .txtRowNumber.Value = "" ' костыль для работы некоторых фич (счетчик)
+        
+        ' тут будет шляпа для того что бы работал поиск
+        Call Add_SearchColumn
+        ThisWorkbook.Sheets("DataBase").AutoFilterMode = False
+        ThisWorkbook.Sheets("SearchData").AutoFilterMode = False
+        ThisWorkbook.Sheets("SearchData").Crlls.Clear
+        
+        '---------------------------------------------
+                
+        .lstDataBase.ColumnCount = 9
+        .lstDataBase.ColumnHeads = True
+        
+        .lstDataBase.ColumnWidths = "40, 60, 70, 50, 60, 60, 70, 70, 60"
+        
+        If iRow > 1 Then
+            .lstDataBase.RowSource = "DataBase!A2:I" & iRow
+        Else
+            .lstDataBase.RowSource = "DataBase!A2:I2"
+        End If
+    
+    End With
+    
+End Sub
+
+Sub Submit()
+    
+    Dim sh As Worksheet
+    Dim iRow As Long
+    
+    Set sh = ThisWorkbook.Sheets("DataBase")
+    
+    If UserForm.txtRowNumber.Value = "" Then
+    
+        iRow = [Counta(DataBase!A:A)] + 1
+    
+    Else
+    
+        iRow = UserForm.txtRowNumber.Value
+        
+    End If
+    
+    With sh ' создаем столбцы которые будут отображаться в форме
+    
+        .Cells(iRow, 1) = iRow - 1
+        
+        .Cells(iRow, 2) = UserForm.ComboBox1.Value
+        
+        .Cells(iRow, 3) = UserForm.TextBox1.Value
+        
+        .Cells(iRow, 4) = UserForm.ComboBox2.Value
+        
+        .Cells(iRow, 5) = UserForm.ComboBox3.Value
+        
+        .Cells(iRow, 6) = UserForm.TextBox2.Value
+        
+        .Cells(iRow, 7) = UserForm.TextBox3.Value
+        
+        .Cells(iRow, 8) = UserForm.TextBox4.Value
+        
+        .Cells(iRow, 9) = [Text(Now(), "dd-mm-yy hh:mm")]
+    
+    End With
+            
+End Sub
+
+Sub Show_Form()
+
+    UserForm.Show
+
+End Sub
+
+Function Selected_List() As Long
+
+    Dim i As Long
+    
+    Selected_List = 0
+    
+    For i = 0 To UserForm.lstDataBase.ListCount - 1
+    
+        If UserForm.lstDataBase.Selected(i) = True Then
+        
+            Selected_List = i + 1
+            Exit For
+        End If
+            
+    Next i
+        
+End Function
+
+Sub Add_SearchColumn()
+
+    UserForm.EnebleEvents = False
+    
+    With UserForm.cmbSearchColumn
+    
+        .Clear
+        
+        .AddItem "All"
+        
+        .AddItem "Вид техники"
+        .AddItem "Положено по табелю"
+        .AddItem "Наименование"
+        .AddItem "Год выпуска"
+        .AddItem "Кол-во"
+        .AddItem "Списано в текущем году"
+        .AddItem "Планируется к списанию в текущем году"
+        .AddItem "Дата заполнения"
+        .Value = "All"
+        
+    End With
+            
+    UserForm.txtSearch.Value = ""
+    UserForm.txtSearch.Enabled = False
+    UserForm.cmdSearch.Enabled = False
+    
+
+End Sub
+
+
+Sub SearchData()
+
+    Application.ScreenUpdating = False
+    
+    Dim shDataBase As Worksheet ' дата в БД
+    Dim shSearchData As Worksheet ' дата для поиска
+    
+    Dim iColumn As Integer
+    Dim DataBaseRow As Long
+    Dim SeachRow As Long
+    
+    Dim sColumn As String
+    Dim sValue As String
+    
+    Set shDataBase = ThisWorkbook.Sheets("DataBase")
+    Set shSearchData = ThisWorkbook.Sheets("SearchData")
+     
+    iDataBaseRow = ThisWorkbook.Sheets("DataBase").Range("A" & Aplication.Row.Count).End(xlUp).Row
+    
+    sColumn = UserForm.cmbSearchColumn.Value
+    sValue = UserForm.txtSearch.Value
+    
+    iColumn = Application.WorksheetFunction.Match(sColumn, shDataBase.Range("A1:I1"), 0)
+       
+    ' сброс фильтра
+    
+    If shDataBase.FilterMode = True Then
+        
+        shDataBase.AutoFilterMode = False
+        
+    End If
+        
+    ' ок фильтра
+    '---------------------------------------- todo
+
+
+
+
+
+
+End Sub
