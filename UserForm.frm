@@ -17,10 +17,10 @@ Option Explicit
 Public EnebleEvents As Boolean
 
 
-Private Sub cmbSearchColumn_Change()
+Private Sub cmdSearchColumn_Change()
 
-    If Me.EnebleEvents = False Then Exit Sub
-    If Me.SearchColumn.Value = "All" Then
+    If Me.EnebleEvents = False Then Exit Sub ' была ошибка, но пофикшено
+    If Me.cmbSearchColumn.Value = "All" Then
     
         Call Reset
         
@@ -125,6 +125,20 @@ Private Sub ComboBox4_Change()
 
 End Sub
 
+Private Sub cmdSearch_Click()
+
+    If Me.txtSearch.Value = "" Then
+    
+        MsgBox "Введите значение для поиска", vbOKOnly + vbInformation, "Поиск"
+        
+        Exit Sub
+            
+    End If
+
+    Call SearchData
+
+End Sub
+
 Private Sub UserForm_Initialize()
 
     ' Aplication.Visible = False
@@ -140,7 +154,42 @@ End Sub
 
 ' End Sub
 
+'-----------------------------------------
+' для скрола мышом
 
+Private Sub ComboBox1_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+
+    HookScroll Me.ComboBox1
+
+End Sub
+
+Private Sub ComboBox2_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+
+    HookScroll Me.ComboBox2
+    
+End Sub
+
+Private Sub ComboBox3_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+
+    HookScroll Me.ComboBox3
+    
+End Sub
+
+Private Sub cmbSearchColumn_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+
+    HookScroll Me.cmbSearchColumn
+    
+End Sub
+
+
+Private Sub UserForm_QueryClose(Cancel As Integer, CloseMode As Integer)
+
+    UnHookScroll
+    
+End Sub
+
+' для скрола
+'---------------------------------------
 
 
 
